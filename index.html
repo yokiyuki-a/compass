@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>方位磁石</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --ring: #1e1e2e;
+    --gold: #c8a96e;
+    --gold-light: #e8d5a3;
+    --red: #e84040;
+    --red-glow: rgba(232, 64, 64, 0.4);
+    --white: #f0ede8;
+    --muted: #6b6880;
+    --accent: #4a9eff;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Rajdhani', sans-serif;
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    position: relative;
+  }
+
+  /* 背景グリッド */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(74,158,255,0.06) 0%, transparent 60%),
+      linear-gradient(rgba(200,169,110,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,169,110,0.03) 1px, transparent 1px);
+    background-size: 100% 100%, 40px 40px, 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    padding: 20px;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  /* ヘッダー */
+  .header {
+    text-align: center;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+  .header h1 {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--gold);
+    letter-spacing: 0.5em;
+  }
+
+  /* コンパス本体 */
+  .compass-container {
+    position: relative;
+    width: min(300px, 80vw);
+    height: min(300px, 80vw);
+  }
+
+  /* 外枠リング（固定） */
+  .outer-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(
+      from 0deg,
+      #1a1a24 0deg, #2a2a3a 5deg, #1a1a24 10deg,
+      #2a2a3a 45deg, #1a1a24 50deg,
+      #2a2a3a 90deg, #1a1a24 95deg,
+      #2a2a3a 135deg, #1a1a24 140deg,
+      #2a2a3a 180deg, #1a1a24 185deg,
+      #2a2a3a 225deg, #1a1a24 230deg,
+      #2a2a3a 270deg, #1a1a24 275deg,
+      #2a2a3a 315deg, #1a1a24 320deg,
+      #2a2a3a 360deg
+    );
+    box-shadow:
+      0 0 40px rgba(200,169,110,0.15),
+      inset 0 0 30px rgba(0,0,0,0.5),
+      0 4px 30px rgba(0,0,0,0.8);
+    border: 1px solid rgba(200,169,110,0.2);
+  }
+
+  /* 目盛りリング（固定） */
+  .tick-ring {
+    position: absolute;
+    inset: 6%;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid rgba(200,169,110,0.15);
+    overflow: hidden;
+  }
+
+  /* 回転するダイヤル */
+  .dial {
+    position: absolute;
+    inset: 6%;
+    border-radius: 50%;
+    transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+  }
+
+  .dial-svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* 中央の針（固定・常に上向き） */
+  .needle-container {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .needle {
+    width: 10px;
+    height: 80%;
+    position: relative;
+    filter: drop-shadow(0 0 8px var(--red-glow));
+  }
+
+  .needle-north {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: calc(35% * 1) solid var(--red);
+    filter: drop-shadow(0 -2px 8px rgba(232,64,64,0.6));
+  }
+
+  .needle-south {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: calc(35% * 1) solid #888;
+  }
+
+  /* 中心点 */
+  .center-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--gold-light), var(--gold));
+    box-shadow: 0 0 10px rgba(200,169,110,0.6);
+    z-index: 10;
+  }
+
+  /* 上部インジケータ（北マーク） */
+  .north-indicator {
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 10px solid var(--gold);
+    z-index: 20;
+    filter: drop-shadow(0 2px 4px rgba(200,169,110,0.5));
+  }
+
+  /* 読み取りパネル */
+  .readout {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .readout-item {
+    background: var(--surface);
+    border: 1px solid rgba(200,169,110,0.1);
+    border-radius: 8px;
+    padding: 12px 8px;
+    text-align: center;
+  }
+
+  .readout-label {
+    font-size: 10px;
+    font-weight: 300;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .readout-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold-light);
+    line-height: 1;
+  }
+
+  .readout-item.direction-main {
+    grid-column: span 1;
+  }
+
+  #direction-text {
+    font-size: 28px;
+    color: var(--white);
+  }
+
+  #degrees-text {
+    font-size: 24px;
+  }
+
+  /* 許可ボタン */
+  .permission-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,10,15,0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    z-index: 100;
+    padding: 40px;
+    text-align: center;
+  }
+
+  .permission-overlay.hidden { display: none; }
+
+  .permission-icon {
+    font-size: 64px;
+    line-height: 1;
+  }
+
+  .permission-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+  }
+
+  .permission-desc {
+    font-size: 14px;
+    color: var(--muted);
+    font-family: 'Noto Sans JP', sans-serif;
+    line-height: 1.7;
+    max-width: 280px;
+  }
+
+  .btn {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: #1a1200;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 40px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(200,169,110,0.3);
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+  .btn:active { transform: scale(0.97); box-shadow: 0 2px 10px rgba(200,169,110,0.2); }
+
+  /* ステータス */
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+  }
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+  }
+  .status-dot.active { background: #4caf50; box-shadow: 0 0 6px #4caf50; }
+  .status-dot.error { background: var(--red); }
+
+  /* 傾きインジケーター */
+  .tilt-display {
+    display: flex;
+    gap: 16px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<div class="permission-overlay" id="permissionOverlay">
+  <div class="permission-icon">🧭</div>
+  <div class="permission-title">方位磁石</div>
+  <p class="permission-desc">
+    正確な方角を表示するために、デバイスの向きセンサーへのアクセスを許可してください。
+  </p>
+  <button class="btn" id="permBtn">センサーを有効化</button>
+  <p class="permission-desc" style="font-size:12px; opacity:0.6;">
+    ※ iOSではボタンをタップ、Androidは自動で開始されます
+  </p>
+</div>
+
+<div class="wrapper">
+  <div class="header">
+    <h1>Compass &nbsp;·&nbsp; 方位磁石</h1>
+  </div>
+
+  <div class="compass-container">
+    <div class="outer-ring"></div>
+    <div class="tick-ring"></div>
+
+    <!-- 回転するダイヤル（目盛り付き） -->
+    <div class="dial" id="dial">
+      <svg class="dial-svg" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="bgGrad" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#16162a"/>
+            <stop offset="100%" stop-color="#0e0e1a"/>
+          </radialGradient>
+        </defs>
+
+        <!-- 背景 -->
+        <circle cx="150" cy="150" r="150" fill="url(#bgGrad)"/>
+
+        <!-- 目盛りと方位文字 -->
+        <g id="ticks"></g>
+        <g id="labels"></g>
+      </svg>
+    </div>
+
+    <!-- 固定の針 -->
+    <div class="needle-container">
+      <div class="needle">
+        <div class="needle-north"></div>
+        <div class="needle-south"></div>
+      </div>
+    </div>
+
+    <!-- 中心点 -->
+    <div class="center-dot"></div>
+
+    <!-- 北インジケーター -->
+    <div class="north-indicator"></div>
+  </div>
+
+  <!-- 読み取り値 -->
+  <div class="readout">
+    <div class="readout-item direction-main">
+      <span class="readout-label">方角</span>
+      <span class="readout-value" id="direction-text">—</span>
+    </div>
+    <div class="readout-item">
+      <span class="readout-label">方位角</span>
+      <span class="readout-value" id="degrees-text">—°</span>
+    </div>
+    <div class="readout-item">
+      <span class="readout-label">精度</span>
+      <span class="readout-value" id="accuracy-text">—</span>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <div class="status-dot" id="statusDot"></div>
+    <span id="statusText">センサー待機中...</span>
+  </div>
+</div>
+
+<script>
+// SVGダイヤル目盛りを生成
+(function buildDial() {
+  const ticksG = document.getElementById('ticks');
+  const labelsG = document.getElementById('labels');
+  const cx = 150, cy = 150, r = 150;
+
+  const cardinals = ['N','NE','E','SE','S','SW','W','NW'];
+  const cardinalColors = { N: '#e84040', S: '#4a9eff', E: '#c8a96e', W: '#c8a96e',
+                           NE: '#888', SE: '#888', SW: '#888', NW: '#888' };
+
+  for (let i = 0; i < 360; i++) {
+    const angle = (i * Math.PI) / 180;
+    const isMajor = i % 90 === 0;
+    const isMinor = i % 45 === 0 && !isMajor;
+    const isMed   = i % 10 === 0 && !isMajor && !isMinor;
+    const isSmall = i % 5 === 0 && !isMajor && !isMinor && !isMed;
+
+    let len, stroke, strokeW;
+    if (isMajor) { len = 22; stroke = '#c8a96e'; strokeW = 2.5; }
+    else if (isMinor) { len = 16; stroke = '#888'; strokeW = 1.5; }
+    else if (isMed)  { len = 10; stroke = '#555'; strokeW = 1; }
+    else if (isSmall){ len = 6;  stroke = '#3a3a4a'; strokeW = 0.8; }
+    else continue;
+
+    const r1 = r - 4, r2 = r1 - len;
+    const x1 = cx + r1 * Math.sin(angle);
+    const y1 = cy - r1 * Math.cos(angle);
+    const x2 = cx + r2 * Math.sin(angle);
+    const y2 = cy - r2 * Math.cos(angle);
+
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+    line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+    line.setAttribute('stroke', stroke);
+    line.setAttribute('stroke-width', strokeW);
+    ticksG.appendChild(line);
+  }
+
+  // 方位文字（45度ごと）
+  cardinals.forEach((label, idx) => {
+    const deg = idx * 45;
+    const angle = (deg * Math.PI) / 180;
+    const lr = r - 36;
+    const x = cx + lr * Math.sin(angle);
+    const y = cy - lr * Math.cos(angle);
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', x);
+    text.setAttribute('y', y);
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('dominant-baseline', 'central');
+    text.setAttribute('fill', cardinalColors[label] || '#888');
+    text.setAttribute('font-size', ['N','E','S','W'].includes(label) ? '18' : '11');
+    text.setAttribute('font-weight', ['N','E','S','W'].includes(label) ? '700' : '400');
+    text.setAttribute('font-family', 'Rajdhani, sans-serif');
+    text.setAttribute('letter-spacing', '1');
+    text.textContent = label;
+    labelsG.appendChild(text);
+  });
+
+  // 10度ごとの数字
+  for (let i = 0; i < 360; i += 30) {
+    if (i % 90 === 0) continue;
+    const angle = (i * Math.PI) / 180;
+    const lr = r - 54;
+    const x = cx + lr * Math.sin(angle);
+    const y = cy - lr * Math.cos(angle);
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', x); text.setAttribute('y', y);
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('dominant-baseline', 'central');
+    text.setAttribute('fill', '#555');
+    text.setAttribute('font-size', '9');
+    text.setAttribute('font-family', 'Rajdhani, sans-serif');
+    text.textContent = i;
+    labelsG.appendChild(text);
+  }
+})();
+
+// コンパスロジック
+const dial = document.getElementById('dial');
+const directionText = document.getElementById('direction-text');
+const degreesText = document.getElementById('degrees-text');
+const accuracyText = document.getElementById('accuracy-text');
+const statusDot = document.getElementById('statusDot');
+const statusText = document.getElementById('statusText');
+const permOverlay = document.getElementById('permissionOverlay');
+const permBtn = document.getElementById('permBtn');
+
+let currentHeading = 0;
+let targetHeading = 0;
+let animFrame;
+
+const cardinalNames = [
+  { name: '北', short: 'N', max: 22.5 },
+  { name: '北北東', short: 'NNE', max: 45 },
+  { name: '北東', short: 'NE', max: 67.5 },
+  { name: '東北東', short: 'ENE', max: 90 },
+  { name: '東', short: 'E', max: 112.5 },
+  { name: '東南東', short: 'ESE', max: 135 },
+  { name: '南東', short: 'SE', max: 157.5 },
+  { name: '南南東', short: 'SSE', max: 180 },
+  { name: '南', short: 'S', max: 202.5 },
+  { name: '南南西', short: 'SSW', max: 225 },
+  { name: '南西', short: 'SW', max: 247.5 },
+  { name: '西南西', short: 'WSW', max: 270 },
+  { name: '西', short: 'W', max: 292.5 },
+  { name: '西北西', short: 'WNW', max: 315 },
+  { name: '北西', short: 'NW', max: 337.5 },
+  { name: '北北西', short: 'NNW', max: 360 },
+];
+
+function getCardinal(deg) {
+  const d = ((deg % 360) + 360) % 360;
+  return cardinalNames.find(c => d < c.max) || cardinalNames[0];
+}
+
+function setStatus(type, msg) {
+  statusDot.className = 'status-dot ' + type;
+  statusText.textContent = msg;
+}
+
+function updateDisplay(heading) {
+  const h = ((heading % 360) + 360) % 360;
+  targetHeading = h;
+}
+
+function animate() {
+  // 最短経路で補間
+  let diff = targetHeading - currentHeading;
+  if (diff > 180) diff -= 360;
+  if (diff < -180) diff += 360;
+  currentHeading += diff * 0.12;
+  currentHeading = ((currentHeading % 360) + 360) % 360;
+
+  // ダイヤルは反対方向に回転（地図のように）
+  dial.style.transform = `rotate(${-currentHeading}deg)`;
+
+  const h = Math.round(currentHeading);
+  const c = getCardinal(h);
+  directionText.textContent = c.short;
+  degreesText.textContent = h + '°';
+
+  animFrame = requestAnimationFrame(animate);
+}
+animate();
+
+// センサー開始
+function startSensor() {
+  if (typeof DeviceOrientationEvent !== 'undefined' &&
+      typeof DeviceOrientationEvent.requestPermission === 'function') {
+    // iOS 13+
+    DeviceOrientationEvent.requestPermission()
+      .then(state => {
+        if (state === 'granted') {
+          attachListener();
+          permOverlay.classList.add('hidden');
+        } else {
+          setStatus('error', 'センサーのアクセスが拒否されました');
+        }
+      })
+      .catch(err => {
+        setStatus('error', 'エラー: ' + err.message);
+      });
+  } else {
+    // Android / その他
+    attachListener();
+    permOverlay.classList.add('hidden');
+  }
+}
+
+function attachListener() {
+  let hasWebkit = false;
+
+  window.addEventListener('deviceorientationabsolute', (e) => {
+    if (e.alpha !== null) {
+      let heading = 360 - e.alpha;
+      if (e.webkitCompassHeading !== undefined) {
+        heading = e.webkitCompassHeading;
+        hasWebkit = true;
+      }
+      updateDisplay(heading);
+      setStatus('active', '磁北方向を検出中');
+      accuracyText.textContent = e.absolute ? '高' : '中';
+    }
+  }, true);
+
+  window.addEventListener('deviceorientation', (e) => {
+    if (hasWebkit && e.webkitCompassHeading !== undefined) {
+      updateDisplay(e.webkitCompassHeading);
+      accuracyText.textContent = '高';
+      setStatus('active', '磁北方向を検出中');
+      return;
+    }
+    if (e.alpha !== null && !hasWebkit) {
+      let heading = 360 - e.alpha;
+      updateDisplay(heading);
+      accuracyText.textContent = '中';
+      setStatus('active', 'センサー読み取り中');
+    }
+  });
+
+  setTimeout(() => {
+    if (statusDot.className.includes('active') === false) {
+      setStatus('error', 'センサーが検出できません');
+      accuracyText.textContent = 'N/A';
+      // デモモード
+      startDemoMode();
+    }
+  }, 3000);
+}
+
+function startDemoMode() {
+  setStatus('', 'デモモード（センサーなし）');
+  let angle = 0;
+  setInterval(() => {
+    angle = (angle + 0.3) % 360;
+    updateDisplay(angle);
+  }, 50);
+}
+
+permBtn.addEventListener('click', startSensor);
+
+// Android：自動でセンサー開始を試みる
+if (typeof DeviceOrientationEvent !== 'undefined' &&
+    typeof DeviceOrientationEvent.requestPermission !== 'function') {
+  // iOS以外は自動で開始
+  setTimeout(() => startSensor(), 300);
+}
+</script>
+</body>
+</html>
