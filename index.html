@@ -3,50 +3,57 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>方位磁石</title>
+<title>九星気学 方位盤</title>
+
+<!-- ファビコン: 九星気学らしい方位盤デザイン -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><radialGradient id='bg' cx='50%25' cy='50%25'><stop offset='0%25' stop-color='%231a1a2a'/><stop offset='100%25' stop-color='%230a0a0f'/></radialGradient></defs><circle cx='50' cy='50' r='48' fill='url(%23bg)' stroke='%23c8a96e' stroke-width='2'/><circle cx='50' cy='50' r='38' fill='none' stroke='%23c8a96e' stroke-width='0.5' opacity='0.5'/><line x1='50' y1='8' x2='50' y2='18' stroke='%23c8a96e' stroke-width='2'/><line x1='50' y1='82' x2='50' y2='92' stroke='%23c8a96e' stroke-width='1.5'/><line x1='8' y1='50' x2='18' y2='50' stroke='%23c8a96e' stroke-width='1.5'/><line x1='82' y1='50' x2='92' y2='50' stroke='%23c8a96e' stroke-width='1.5'/><polygon points='50,18 44,50 50,46 56,50' fill='%23e84040'/><polygon points='50,82 44,50 50,54 56,50' fill='%23888'/><circle cx='50' cy='50' r='6' fill='%23c8a96e'/><text x='50' y='53' text-anchor='middle' font-family='serif' font-size='8' font-weight='700' fill='%231a1200'>五</text></svg>"/>
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%230a0a0f' stroke='%23c8a96e' stroke-width='2'/><polygon points='50,18 44,50 50,46 56,50' fill='%23e84040'/><polygon points='50,82 44,50 50,54 56,50' fill='%23888'/><circle cx='50' cy='50' r='8' fill='%23c8a96e'/><text x='50' y='54' text-anchor='middle' font-family='serif' font-size='10' font-weight='700' fill='%231a1200'>五</text></svg>"/>
+
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Noto+Serif+JP:wght@400;500;700&family=Noto+Sans+JP:wght@300;400;500&display=swap');
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
     --bg: #0a0a0f;
     --surface: #12121a;
-    --ring: #1e1e2e;
     --gold: #c8a96e;
     --gold-light: #e8d5a3;
     --red: #e84040;
     --red-glow: rgba(232, 64, 64, 0.4);
     --white: #f0ede8;
     --muted: #6b6880;
-    --accent: #4a9eff;
+    --good: #4caf50;
+    --good-strong: #00c853;
+    --bad: #e84040;
+    --bad-strong: #b71c1c;
   }
 
   html, body {
     height: 100%;
     background: var(--bg);
     color: var(--white);
-    font-family: 'Rajdhani', sans-serif;
+    font-family: 'Noto Serif JP', 'Rajdhani', serif;
+    touch-action: manipulation;
     overflow: hidden;
-    touch-action: none;
   }
 
   body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 0;
+    padding: 8px 0 10px;
     position: relative;
+    height: 100dvh;
+    height: 100vh;
   }
 
-  /* 背景グリッド */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
     background-image:
-      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(74,158,255,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(200,169,110,0.08) 0%, transparent 60%),
       linear-gradient(rgba(200,169,110,0.03) 1px, transparent 1px),
       linear-gradient(90deg, rgba(200,169,110,0.03) 1px, transparent 1px);
     background-size: 100% 100%, 40px 40px, 40px 40px;
@@ -60,33 +67,68 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 28px;
-    padding: 20px;
+    gap: 10px;
+    padding: 0 14px;
     width: 100%;
-    max-width: 400px;
+    max-width: 420px;
+    height: 100%;
+    justify-content: space-between;
   }
 
-  /* ヘッダー */
   .header {
-    text-align: center;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
   .header h1 {
-    font-size: 13px;
-    font-weight: 300;
+    font-size: 12px;
+    font-weight: 500;
     color: var(--gold);
-    letter-spacing: 0.5em;
+    letter-spacing: 0.3em;
+    flex: 1;
+    text-align: center;
   }
+  .header-btn {
+    background: var(--surface);
+    border: 1px solid rgba(200,169,110,0.3);
+    color: var(--gold);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s;
+  }
+  .header-btn:active { transform: scale(0.92); }
 
-  /* コンパス本体 */
+  .today-info {
+    background: linear-gradient(135deg, rgba(200,169,110,0.1), rgba(200,169,110,0.04));
+    border: 1px solid rgba(200,169,110,0.2);
+    border-radius: 8px;
+    padding: 8px 12px;
+    width: 100%;
+    font-family: 'Noto Sans JP', sans-serif;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 12px;
+  }
+  .today-info .item { display: flex; flex-direction: column; gap: 1px; }
+  .today-info .item .label { font-size: 9px; color: var(--muted); letter-spacing: 0.08em; }
+  .today-info .item .value { font-size: 12px; color: var(--gold-light); font-weight: 500; }
+  .today-info .item.tap { cursor: pointer; }
+  .today-info .item.tap .value { text-decoration: underline dotted; text-underline-offset: 2px; }
+
   .compass-container {
     position: relative;
-    width: min(300px, 80vw);
-    height: min(300px, 80vw);
+    width: min(300px, 78vw, 50vh);
+    height: min(300px, 78vw, 50vh);
+    flex-shrink: 0;
   }
 
-  /* 外枠リング（固定） */
   .outer-ring {
     position: absolute;
     inset: 0;
@@ -104,37 +146,30 @@
       #2a2a3a 360deg
     );
     box-shadow:
-      0 0 40px rgba(200,169,110,0.15),
+      0 0 40px rgba(200,169,110,0.18),
       inset 0 0 30px rgba(0,0,0,0.5),
       0 4px 30px rgba(0,0,0,0.8);
-    border: 1px solid rgba(200,169,110,0.2);
+    border: 1px solid rgba(200,169,110,0.25);
   }
 
-  /* 目盛りリング（固定） */
   .tick-ring {
     position: absolute;
-    inset: 6%;
+    inset: 5%;
     border-radius: 50%;
     background: var(--surface);
-    border: 1px solid rgba(200,169,110,0.15);
+    border: 1px solid rgba(200,169,110,0.2);
     overflow: hidden;
   }
 
-  /* 回転するダイヤル */
   .dial {
     position: absolute;
-    inset: 6%;
+    inset: 5%;
     border-radius: 50%;
     transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     will-change: transform;
   }
+  .dial-svg { width: 100%; height: 100%; }
 
-  .dial-svg {
-    width: 100%;
-    height: 100%;
-  }
-
-  /* 中央の針（固定・常に上向き） */
   .needle-container {
     position: absolute;
     inset: 0;
@@ -143,14 +178,12 @@
     justify-content: center;
     pointer-events: none;
   }
-
   .needle {
     width: 10px;
-    height: 80%;
+    height: 78%;
     position: relative;
     filter: drop-shadow(0 0 8px var(--red-glow));
   }
-
   .needle-north {
     position: absolute;
     bottom: 50%;
@@ -163,7 +196,6 @@
     border-bottom: calc(35% * 1) solid var(--red);
     filter: drop-shadow(0 -2px 8px rgba(232,64,64,0.6));
   }
-
   .needle-south {
     position: absolute;
     top: 50%;
@@ -176,21 +208,38 @@
     border-top: calc(35% * 1) solid #888;
   }
 
-  /* 中心点 */
   .center-dot {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 14px;
-    height: 14px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
-    background: radial-gradient(circle, var(--gold-light), var(--gold));
-    box-shadow: 0 0 10px rgba(200,169,110,0.6);
+    background: radial-gradient(circle, #2a2418, #1a1610);
+    border: 1.5px solid rgba(200,169,110,0.5);
+    box-shadow: 0 0 20px rgba(200,169,110,0.4), inset 0 0 15px rgba(0,0,0,0.6);
     z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    pointer-events: none;
+  }
+  .center-dot .num {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--gold-light);
+    text-shadow: 0 0 8px rgba(184,134,11,0.6);
+  }
+  .center-dot .name {
+    font-size: 8px;
+    margin-top: 3px;
+    letter-spacing: 0.05em;
+    color: var(--gold);
   }
 
-  /* 上部インジケータ（北マーク） */
   .north-indicator {
     position: absolute;
     top: -1px;
@@ -205,53 +254,337 @@
     filter: drop-shadow(0 2px 4px rgba(200,169,110,0.5));
   }
 
-  /* 読み取りパネル */
-  .readout {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 12px;
+  .fortune-display {
     width: 100%;
+    background: var(--surface);
+    border: 1px solid rgba(200,169,110,0.15);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .fortune-display .title {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    margin-bottom: 3px;
+  }
+  .fortune-display .verdict {
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Noto Serif JP', serif;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .fortune-display .verdict.good { color: var(--good); }
+  .fortune-display .verdict.good-strong { color: var(--good-strong); }
+  .fortune-display .verdict.bad { color: var(--bad); }
+  .fortune-display .verdict.bad-strong { color: var(--bad-strong); }
+  .fortune-display .verdict.neutral { color: var(--gold-light); }
+  .fortune-display .verdict .icon { font-size: 18px; }
+  .fortune-display .reason {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.4;
   }
 
-  .readout-item {
+  .readout {
+    display: none;
+  }
+
+  .legend {
+    width: 100%;
     background: var(--surface);
     border: 1px solid rgba(200,169,110,0.1);
     border-radius: 8px;
-    padding: 12px 8px;
-    text-align: center;
-  }
-
-  .readout-label {
+    padding: 8px 12px;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 10px;
-    font-weight: 300;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.1s;
+    position: relative;
+  }
+  .legend:hover { border-color: rgba(200,169,110,0.3); }
+  .legend:active { transform: scale(0.99); }
+  .legend::after {
+    content: 'ⓘ';
+    position: absolute;
+    top: 6px;
+    right: 10px;
+    font-size: 12px;
+    color: var(--gold);
+    opacity: 0.7;
+  }
+  .legend-title {
+    font-size: 9px;
     color: var(--muted);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    display: block;
-    margin-bottom: 4px;
+    letter-spacing: 0.15em;
+    margin-bottom: 5px;
   }
-
-  .readout-value {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--gold-light);
-    line-height: 1;
+  .legend-tap-hint {
+    display: none;
   }
-
-  .readout-item.direction-main {
-    grid-column: span 1;
+  .legend-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 4px 8px;
   }
-
-  #direction-text {
-    font-size: 28px;
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
     color: var(--white);
+    font-size: 10px;
+  }
+  .legend-color {
+    width: 11px;
+    height: 11px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .legend-color.good { background: rgba(76,175,80,0.4); border: 1px solid rgba(76,175,80,0.8); }
+  .legend-color.bad { background: rgba(232,64,64,0.4); border: 1px solid rgba(232,64,64,0.8); }
+  .legend-color.bad-strong { background: rgba(183,28,28,0.6); border: 1px solid rgba(183,28,28,1); }
+  .legend-color.neutral { background: rgba(107,104,128,0.2); border: 1px solid rgba(107,104,128,0.5); }
+  .legend-note {
+    margin-top: 6px;
+    font-size: 9px;
+    color: var(--muted);
+    line-height: 1.4;
   }
 
-  #degrees-text {
-    font-size: 24px;
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 20px;
+  }
+  .modal-overlay.hidden { display: none; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid rgba(200,169,110,0.3);
+    border-radius: 12px;
+    padding: 24px 22px;
+    width: 100%;
+    max-width: 360px;
+    font-family: 'Noto Sans JP', sans-serif;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+  .modal h2 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 18px;
+    color: var(--gold);
+    margin-bottom: 14px;
+    letter-spacing: 0.1em;
+  }
+  .modal p.lead {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+  .modal label {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.1em;
+  }
+  .modal input[type="date"] {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid rgba(200,169,110,0.3);
+    color: var(--white);
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-family: inherit;
+    color-scheme: dark;
+    margin-bottom: 14px;
+  }
+  .modal-result {
+    background: rgba(200,169,110,0.08);
+    border: 1px solid rgba(200,169,110,0.2);
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 13px;
+    color: var(--gold-light);
+    margin-bottom: 16px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: 'Noto Serif JP', serif;
+    line-height: 1.5;
+  }
+  .modal-actions { display: flex; gap: 10px; }
+  .modal .btn {
+    flex: 1;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: #1a1200;
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+  }
+  .modal .btn.secondary {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid rgba(200,169,110,0.2);
+  }
+  .modal .btn:active { transform: scale(0.97); }
+
+  /* 説明モーダル用 */
+  .info-modal {
+    max-width: 420px;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 22px 20px 18px;
+  }
+  .info-modal::-webkit-scrollbar { width: 6px; }
+  .info-modal::-webkit-scrollbar-track { background: transparent; }
+  .info-modal::-webkit-scrollbar-thumb { background: rgba(200,169,110,0.3); border-radius: 3px; }
+  .info-modal h2 {
+    position: sticky;
+    top: -22px;
+    background: var(--surface);
+    margin: -22px -20px 14px;
+    padding: 22px 20px 12px;
+    border-bottom: 1px solid rgba(200,169,110,0.15);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .info-modal .close-btn {
+    background: transparent;
+    border: 1px solid rgba(200,169,110,0.25);
+    color: var(--gold);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    padding: 0;
+  }
+  .info-modal h3 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 14px;
+    color: var(--gold);
+    margin: 18px 0 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px dotted rgba(200,169,110,0.2);
+    letter-spacing: 0.08em;
+  }
+  .info-modal h3:first-of-type { margin-top: 0; }
+  .info-modal p {
+    font-size: 12px;
+    color: var(--white);
+    line-height: 1.75;
+    margin-bottom: 8px;
+  }
+  .info-modal .desc-block {
+    background: rgba(200,169,110,0.05);
+    border: 1px solid rgba(200,169,110,0.12);
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .info-modal .desc-block.bad {
+    background: rgba(232,64,64,0.06);
+    border-color: rgba(232,64,64,0.25);
+  }
+  .info-modal .desc-block.good {
+    background: rgba(76,175,80,0.06);
+    border-color: rgba(76,175,80,0.25);
+  }
+  .info-modal .legend-detail {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .info-modal .legend-detail .icon-box {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    font-family: 'Noto Serif JP', serif;
+    flex-shrink: 0;
+  }
+  .info-modal .legend-detail .icon-box.good-strong { background: rgba(0,200,83,0.22); color: #00c853; border: 1px solid rgba(0,200,83,0.6); }
+  .info-modal .legend-detail .icon-box.good        { background: rgba(76,175,80,0.18); color: #4caf50; border: 1px solid rgba(76,175,80,0.6); }
+  .info-modal .legend-detail .icon-box.neutral     { background: rgba(107,104,128,0.18); color: #aaa;    border: 1px solid rgba(107,104,128,0.5); }
+  .info-modal .legend-detail .icon-box.bad         { background: rgba(232,64,64,0.18); color: #e84040; border: 1px solid rgba(232,64,64,0.6); }
+  .info-modal .legend-detail .icon-box.bad-strong  { background: rgba(183,28,28,0.28); color: #ff5252; border: 1px solid rgba(183,28,28,0.9); }
+  .info-modal .legend-detail .text {
+    flex: 1;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .info-modal .legend-detail .text strong {
+    display: block;
+    color: var(--gold-light);
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+  .info-modal .star-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 10px;
+    margin-top: 6px;
+  }
+  .info-modal .star-grid .star-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+  }
+  .info-modal .star-grid .star-item .star-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 11px;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .info-modal .term {
+    color: var(--gold-light);
+    font-weight: 700;
+  }
+  .info-modal .footer-note {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(200,169,110,0.15);
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.6;
   }
 
-  /* 許可ボタン */
   .permission-overlay {
     position: fixed;
     inset: 0;
@@ -265,21 +598,18 @@
     padding: 40px;
     text-align: center;
   }
-
   .permission-overlay.hidden { display: none; }
-
   .permission-icon {
-    font-size: 64px;
-    line-height: 1;
+    font-size: 56px;
+    color: var(--gold);
+    text-shadow: 0 0 20px rgba(200,169,110,0.6);
   }
-
   .permission-title {
     font-size: 22px;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--gold);
-    letter-spacing: 0.1em;
+    letter-spacing: 0.2em;
   }
-
   .permission-desc {
     font-size: 14px;
     color: var(--muted);
@@ -287,56 +617,45 @@
     line-height: 1.7;
     max-width: 280px;
   }
-
   .btn {
     background: linear-gradient(135deg, var(--gold), var(--gold-light));
     color: #1a1200;
     border: none;
     border-radius: 8px;
     padding: 14px 40px;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 16px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 15px;
     font-weight: 700;
     letter-spacing: 0.2em;
-    text-transform: uppercase;
     cursor: pointer;
     box-shadow: 0 4px 20px rgba(200,169,110,0.3);
-    transition: transform 0.1s, box-shadow 0.1s;
   }
-  .btn:active { transform: scale(0.97); box-shadow: 0 2px 10px rgba(200,169,110,0.2); }
+  .btn:active { transform: scale(0.97); }
 
-  /* ステータス */
   .status-bar {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 11px;
+    gap: 5px;
+    font-size: 9px;
     color: var(--muted);
-    letter-spacing: 0.15em;
+    letter-spacing: 0.1em;
+    font-family: 'Noto Sans JP', sans-serif;
   }
   .status-dot {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
     background: var(--muted);
   }
   .status-dot.active { background: #4caf50; box-shadow: 0 0 6px #4caf50; }
   .status-dot.error { background: var(--red); }
-
-  /* 傾きインジケーター */
-  .tilt-display {
-    display: flex;
-    gap: 16px;
-    font-size: 11px;
-    color: var(--muted);
-  }
 </style>
 </head>
 <body>
 
 <div class="permission-overlay" id="permissionOverlay">
-  <div class="permission-icon">🧭</div>
-  <div class="permission-title">方位磁石</div>
+  <div class="permission-icon">羅</div>
+  <div class="permission-title">九星気学 方位盤</div>
   <p class="permission-desc">
     正確な方角を表示するために、デバイスの向きセンサーへのアクセスを許可してください。
   </p>
@@ -346,16 +665,174 @@
   </p>
 </div>
 
-<div class="wrapper">
+<div class="modal-overlay hidden" id="birthModal">
+  <div class="modal">
+    <h2>本命星の設定</h2>
+    <p class="lead">
+      生年月日から本命星を判定し、あなた個人の凶方位（本命殺・本命的殺）と吉方位を表示します。<br>
+      ※ 立春(2/4)を年の境とします
+    </p>
+    <label>生年月日</label>
+    <input type="date" id="birthInput" min="1900-01-01" max="2099-12-31">
+    <div class="modal-result" id="birthResult">生年月日を入力してください</div>
+    <div class="modal-actions">
+      <button class="btn secondary" id="birthCancel">クリア</button>
+      <button class="btn" id="birthSave">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="infoModal">
+  <div class="modal info-modal">
+    <h2>
+      <span>九星気学 方位盤の見方</span>
+      <button class="close-btn" id="infoClose" aria-label="閉じる">×</button>
+    </h2>
+
+    <h3>📖 九星気学とは</h3>
+    <p>
+      九星気学（きゅうせいきがく）は、古代中国の易学・五行思想に基づく東洋の方位学です。
+      生年月日から導かれる<span class="term">本命星（ほんめいせい）</span>と、その日の天体の運行（<span class="term">日盤・月盤・年盤</span>）から、
+      引越し・旅行・契約など、移動を伴う行動に適した方位を判断します。
+    </p>
+
+    <h3>⭐ 九つの星（九星）</h3>
+    <p style="margin-bottom:4px;">それぞれが五行（木火土金水）と方位に対応します。</p>
+    <div class="star-grid">
+      <div class="star-item"><div class="star-dot" style="background:#5b9bd5">一</div>一白水星（水・北）</div>
+      <div class="star-item"><div class="star-dot" style="background:#888888">二</div>二黒土星（土・南西）</div>
+      <div class="star-item"><div class="star-dot" style="background:#3eb371">三</div>三碧木星（木・東）</div>
+      <div class="star-item"><div class="star-dot" style="background:#6abf69">四</div>四緑木星（木・南東）</div>
+      <div class="star-item"><div class="star-dot" style="background:#b8860b">五</div>五黄土星（土・中央）</div>
+      <div class="star-item"><div class="star-dot" style="background:#888;color:#fff">六</div>六白金星（金・北西）</div>
+      <div class="star-item"><div class="star-dot" style="background:#e84040">七</div>七赤金星（金・西）</div>
+      <div class="star-item"><div class="star-dot" style="background:#b89968">八</div>八白土星（土・北東）</div>
+      <div class="star-item"><div class="star-dot" style="background:#d65aa8">九</div>九紫火星（火・南）</div>
+    </div>
+
+    <h3>🧭 方位盤の見方</h3>
+    <p>
+      九星気学の方位盤は、四正（<span class="term">北・東・南・西</span>）を<strong>30°</strong>幅、四隅（<span class="term">北東・南東・南西・北西</span>）を<strong>60°</strong>幅で区切ります。
+      一般的な方位磁石の8等分（45°）とは異なる、伝統的な区割りです。
+    </p>
+    <p>
+      各方位に書かれた<span class="term">漢数字（一〜九）</span>は、本日その方位に巡ってきている星（<span class="term">日盤</span>）を表します。
+      中央には<span class="term">中宮星</span>（その日の主役の星）が表示されます。
+    </p>
+
+    <h3>🎯 吉凶の凡例</h3>
+    <div class="legend-detail">
+      <div class="icon-box good-strong">◎</div>
+      <div class="text">
+        <strong>大吉</strong>
+        本命星と回座する星が同じ五行で結ばれる「比和」、または良縁を生む「相生」の関係にある最良の方位。
+      </div>
+    </div>
+    <div class="legend-detail">
+      <div class="icon-box good">○</div>
+      <div class="text">
+        <strong>吉</strong>
+        五行的に味方となる星が巡ってきている方位。新たな挑戦やお参り、旅行に向いています。
+      </div>
+    </div>
+    <div class="legend-detail">
+      <div class="icon-box neutral">・</div>
+      <div class="text">
+        <strong>平</strong>
+        特に凶意も吉意もない方位。本命星未設定時はほとんどがここに分類されます。
+      </div>
+    </div>
+    <div class="legend-detail">
+      <div class="icon-box bad">✕</div>
+      <div class="text">
+        <strong>凶</strong>
+        歳破・月破・本命殺・本命的殺など、避けたほうがよい方位。重要な移動は控えるのが無難です。
+      </div>
+    </div>
+    <div class="legend-detail">
+      <div class="icon-box bad-strong">☠</div>
+      <div class="text">
+        <strong>大凶</strong>
+        五黄殺・暗剣殺。気学において最も忌み嫌われる凶方位で、トラブルや事故を招くとされます。
+      </div>
+    </div>
+
+    <h3>⚠️ 主な凶方位（共通）</h3>
+    <div class="desc-block bad">
+      <strong style="color:#ff5252;">五黄殺（ごおうさつ）</strong>：日盤・月盤・年盤の<strong>五黄土星が回座する方位</strong>。自滅・破壊を招く最大の凶方位。
+    </div>
+    <div class="desc-block bad">
+      <strong style="color:#ff5252;">暗剣殺（あんけんさつ）</strong>：<strong>五黄殺の正反対の方位</strong>。他人や外的要因による災難を招くとされる。
+    </div>
+    <div class="desc-block bad">
+      <strong style="color:#e84040;">歳破（さいは）</strong>：その年の十二支の<strong>反対側にあたる方位</strong>。物事が破れる・契約が壊れるとされる。
+    </div>
+    <div class="desc-block bad">
+      <strong style="color:#e84040;">月破（げっぱ）</strong>：その月の十二支の<strong>反対側の方位</strong>。月単位での凶方位。
+    </div>
+
+    <h3>👤 本命星に基づく凶方位</h3>
+    <p style="font-size:11px;color:var(--muted);">※ 右上の⚙ボタンから生年月日を設定すると表示されます</p>
+    <div class="desc-block bad">
+      <strong style="color:#e84040;">本命殺（ほんめいさつ）</strong>：あなたの<strong>本命星が回座する方位</strong>。健康面の凶。
+    </div>
+    <div class="desc-block bad">
+      <strong style="color:#e84040;">本命的殺（ほんめいてきさつ）</strong>：<strong>本命殺の反対側の方位</strong>。精神面・人間関係の凶。
+    </div>
+
+    <h3>✨ 吉方位（本命星設定時）</h3>
+    <div class="desc-block good">
+      <strong style="color:#4caf50;">比和（ひわ）</strong>：本命星と同じ五行の星が回座する方位（例：水の人に水星）。
+    </div>
+    <div class="desc-block good">
+      <strong style="color:#4caf50;">相生（そうじょう）</strong>：本命星を生かす五行の星が回座する方位（例：木の人に水星 ＝ 水生木）。
+    </div>
+
+    <h3>🔍 表示パネルの説明</h3>
+    <p>
+      画面上部の<span class="term">今日情報パネル</span>には、本日の日付・日盤の中宮星・月盤の中宮星・あなたの本命星・歳破方位が表示されます。
+    </p>
+    <p>
+      コンパス下の<span class="term">「いま向いている方位の吉凶」</span>パネルは、スマホの向いている方角の九星と吉凶判定をリアルタイムで表示します。
+    </p>
+
+    <div class="footer-note">
+      ※ 本アプリの日盤計算は近似（9日循環）です。厳密な気学では冬至・夏至付近の甲子日を起点とする陰陽遁を用います。<br>
+      ※ 表示はあくまで参考目安です。引越し・旅行・契約など重要な判断は、九星気学の専門家にご相談ください。
+    </div>
+  </div>
+</div>
+
+
   <div class="header">
-    <h1>Compass &nbsp;·&nbsp; 方位磁石</h1>
+    <button class="header-btn" id="settingsBtn" title="本命星設定">⚙</button>
+    <h1>九星気学 方位盤</h1>
+    <div style="width:36px"></div>
+  </div>
+
+  <div class="today-info">
+    <div class="item">
+      <span class="label">本日</span>
+      <span class="value" id="todayDate">—</span>
+    </div>
+    <div class="item">
+      <span class="label">日盤 / 月盤</span>
+      <span class="value" id="todayStars">—</span>
+    </div>
+    <div class="item tap" id="honmeiInfo">
+      <span class="label">あなたの本命星</span>
+      <span class="value" id="honmeiText">設定する →</span>
+    </div>
+    <div class="item">
+      <span class="label">本日の歳破</span>
+      <span class="value" id="saihaText">—</span>
+    </div>
   </div>
 
   <div class="compass-container">
     <div class="outer-ring"></div>
     <div class="tick-ring"></div>
 
-    <!-- 回転するダイヤル（目盛り付き） -->
     <div class="dial" id="dial">
       <svg class="dial-svg" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -364,17 +841,17 @@
             <stop offset="100%" stop-color="#0e0e1a"/>
           </radialGradient>
         </defs>
-
-        <!-- 背景 -->
         <circle cx="150" cy="150" r="150" fill="url(#bgGrad)"/>
 
-        <!-- 目盛りと方位文字 -->
+        <g id="fortuneHighlights"></g>
+        <g id="sectors"></g>
         <g id="ticks"></g>
         <g id="labels"></g>
+        <g id="zodiac"></g>
+        <g id="fortuneBadges"></g>
       </svg>
     </div>
 
-    <!-- 固定の針 -->
     <div class="needle-container">
       <div class="needle">
         <div class="needle-north"></div>
@@ -382,27 +859,32 @@
       </div>
     </div>
 
-    <!-- 中心点 -->
-    <div class="center-dot"></div>
+    <div class="center-dot">
+      <div class="num" id="centerStarNum">—</div>
+      <div class="name" id="centerStarName">中宮</div>
+    </div>
 
-    <!-- 北インジケーター -->
     <div class="north-indicator"></div>
   </div>
 
-  <!-- 読み取り値 -->
-  <div class="readout">
-    <div class="readout-item direction-main">
-      <span class="readout-label">方角</span>
-      <span class="readout-value" id="direction-text">—</span>
+  <div class="fortune-display">
+    <div class="title">いま向いている方位の吉凶</div>
+    <div class="verdict" id="fortuneVerdict">
+      <span class="icon">—</span>
+      <span id="fortuneVerdictText">方位を測定中</span>
     </div>
-    <div class="readout-item">
-      <span class="readout-label">方位角</span>
-      <span class="readout-value" id="degrees-text">—°</span>
+    <div class="reason" id="fortuneReason">—</div>
+  </div>
+
+  <div class="legend" id="legendBox">
+    <div class="legend-title">凡例</div>
+    <div class="legend-grid">
+      <div class="legend-item"><div class="legend-color good"></div>○ 吉方位</div>
+      <div class="legend-item"><div class="legend-color bad"></div>✕ 凶方位</div>
+      <div class="legend-item"><div class="legend-color bad-strong"></div>☠ 大凶</div>
+      <div class="legend-item"><div class="legend-color neutral"></div>・ 平</div>
     </div>
-    <div class="readout-item">
-      <span class="readout-label">精度</span>
-      <span class="readout-value" id="accuracy-text">—</span>
-    </div>
+    <div class="legend-tap-hint">タップして詳しい説明を表示</div>
   </div>
 
   <div class="status-bar">
@@ -412,157 +894,510 @@
 </div>
 
 <script>
-// SVGダイヤル目盛りを生成
-(function buildDial() {
-  const ticksG = document.getElementById('ticks');
-  const labelsG = document.getElementById('labels');
-  const cx = 150, cy = 150, r = 150;
+/* ============================================
+   九星気学の方位定義
+============================================ */
+const directions = [
+  { id: 'N',  name: '北',   star: 1, color: '#5b9bd5', center: 0,   start: 345, end: 15 },
+  { id: 'NE', name: '北東', star: 8, color: '#b89968', center: 45,  start: 15,  end: 75 },
+  { id: 'E',  name: '東',   star: 3, color: '#3eb371', center: 90,  start: 75,  end: 105 },
+  { id: 'SE', name: '南東', star: 4, color: '#6abf69', center: 135, start: 105, end: 165 },
+  { id: 'S',  name: '南',   star: 9, color: '#d65aa8', center: 180, start: 165, end: 195 },
+  { id: 'SW', name: '南西', star: 2, color: '#888888', center: 225, start: 195, end: 255 },
+  { id: 'W',  name: '西',   star: 7, color: '#e84040', center: 270, start: 255, end: 285 },
+  { id: 'NW', name: '北西', star: 6, color: '#e8e8e8', center: 315, start: 285, end: 345 },
+];
 
-  const cardinals = ['N','NE','E','SE','S','SW','W','NW'];
-  const cardinalColors = { N: '#e84040', S: '#4a9eff', E: '#c8a96e', W: '#c8a96e',
-                           NE: '#888', SE: '#888', SW: '#888', NW: '#888' };
+const teiiStarOf = {};
+directions.forEach(d => { teiiStarOf[d.id] = d.star; });
+
+const STAR_KANJI = ['','一','二','三','四','五','六','七','八','九'];
+const STAR_NAMES = ['','一白水星','二黒土星','三碧木星','四緑木星','五黄土星','六白金星','七赤金星','八白土星','九紫火星'];
+
+// 五行
+const gogyo = { 1:'水', 2:'土', 3:'木', 4:'木', 5:'土', 6:'金', 7:'金', 8:'土', 9:'火' };
+function gogyoRelation(a, b) {
+  const shou = { '木':'火', '火':'土', '土':'金', '金':'水', '水':'木' };
+  const koku = { '木':'土', '土':'水', '水':'火', '火':'金', '金':'木' };
+  if (a === b) return 'hi';
+  if (shou[a] === b) return 'shoOut';
+  if (shou[b] === a) return 'shoIn';
+  if (koku[a] === b) return 'kokuOut';
+  if (koku[b] === a) return 'kokuIn';
+  return 'none';
+}
+
+const zodiacSigns = [
+  { kanji: '子', deg: 0   }, { kanji: '丑', deg: 30  },
+  { kanji: '寅', deg: 60  }, { kanji: '卯', deg: 90  },
+  { kanji: '辰', deg: 120 }, { kanji: '巳', deg: 150 },
+  { kanji: '午', deg: 180 }, { kanji: '未', deg: 210 },
+  { kanji: '申', deg: 240 }, { kanji: '酉', deg: 270 },
+  { kanji: '戌', deg: 300 }, { kanji: '亥', deg: 330 },
+];
+
+/* ============================================
+   九星計算ロジック
+============================================ */
+function getKigakuYear(date) {
+  const y = date.getFullYear();
+  const risshun = new Date(y, 1, 4);
+  return date < risshun ? y - 1 : y;
+}
+
+function getYearStar(date) {
+  const year = getKigakuYear(date);
+  let sum = 0;
+  String(year).split('').forEach(c => sum += parseInt(c));
+  while (sum > 9) {
+    let s = 0;
+    String(sum).split('').forEach(c => s += parseInt(c));
+    sum = s;
+  }
+  let star = 11 - sum;
+  if (star > 9) star -= 9;
+  if (star < 1) star += 9;
+  return star;
+}
+
+function getKigakuMonth(date) {
+  const y = date.getFullYear();
+  const setsu = [
+    { m: 2,  d: 4,  idx: 1 },   // 立春 → 寅月
+    { m: 3,  d: 6,  idx: 2 },
+    { m: 4,  d: 5,  idx: 3 },
+    { m: 5,  d: 6,  idx: 4 },
+    { m: 6,  d: 6,  idx: 5 },
+    { m: 7,  d: 7,  idx: 6 },
+    { m: 8,  d: 8,  idx: 7 },
+    { m: 9,  d: 8,  idx: 8 },
+    { m: 10, d: 8,  idx: 9 },
+    { m: 11, d: 7,  idx: 10 },
+    { m: 12, d: 7,  idx: 11 },
+  ];
+  let result;
+  const koukan = new Date(y, 0, 6);
+  if (date >= koukan && date < new Date(y, 1, 4)) {
+    result = 12; // 小寒〜立春前は丑月
+  } else if (date < koukan) {
+    result = 11; // 1月6日以前は子月
+  } else {
+    result = 1;
+    for (const s of setsu) {
+      const sd = new Date(y, s.m - 1, s.d);
+      if (date >= sd) result = s.idx;
+    }
+  }
+  return result;
+}
+
+function getMonthStar(date) {
+  const yearStar = getYearStar(date);
+  const km = getKigakuMonth(date);
+  let base;
+  if ([1,4,7].includes(yearStar)) base = 8;
+  else if ([2,5,8].includes(yearStar)) base = 5;
+  else base = 2;
+  let s = base - (km - 1);
+  while (s < 1) s += 9;
+  while (s > 9) s -= 9;
+  return s;
+}
+
+// 日盤中宮星（近似計算）
+// 厳密には冬至・夏至付近の甲子日基準の陰陽遁ですが、
+// ここでは9日循環の概算を用います
+function getDayStar(date) {
+  const baseDate = new Date(2025, 0, 1);
+  baseDate.setHours(0,0,0,0);
+  const target = new Date(date);
+  target.setHours(0,0,0,0);
+  const diffDays = Math.round((target - baseDate) / 86400000);
+  let s = ((5 - 1 + diffDays) % 9 + 9) % 9 + 1;
+  return s;
+}
+
+function starsForChugu(chuguStar) {
+  const shift = chuguStar - 5;
+  const result = {};
+  for (const dir of directions) {
+    let s = teiiStarOf[dir.id] + shift;
+    while (s < 1) s += 9;
+    while (s > 9) s -= 9;
+    result[dir.id] = s;
+  }
+  result['C'] = chuguStar;
+  return result;
+}
+
+/* ============================================
+   吉凶判定
+============================================ */
+const OPP = { N:'S', S:'N', E:'W', W:'E', NE:'SW', SW:'NE', NW:'SE', SE:'NW' };
+
+function gokoOf(chuguStar) {
+  if (chuguStar === 5) return null;
+  const stars = starsForChugu(chuguStar);
+  for (const [dir, s] of Object.entries(stars)) {
+    if (s === 5 && dir !== 'C') return dir;
+  }
+  return null;
+}
+function ankenOf(chuguStar) {
+  const g = gokoOf(chuguStar);
+  return g ? OPP[g] : null;
+}
+
+function saihaOf(date) {
+  const kigakuYear = getKigakuYear(date);
+  const branchIdx = ((kigakuYear - 1984) % 12 + 12) % 12;
+  const oppIdx = (branchIdx + 6) % 12;
+  const oppDeg = oppIdx * 30;
+  return getKigakuDirectionByDeg(oppDeg).id;
+}
+
+function geppaOf(date) {
+  const km = getKigakuMonth(date);
+  const monthBranchIdx = (km + 1) % 12;
+  const oppIdx = (monthBranchIdx + 6) % 12;
+  const oppDeg = oppIdx * 30;
+  return getKigakuDirectionByDeg(oppDeg).id;
+}
+
+function honmeisatuOf(honmeiStar, chuguStar) {
+  if (!honmeiStar) return null;
+  const stars = starsForChugu(chuguStar);
+  for (const [dir, s] of Object.entries(stars)) {
+    if (s === honmeiStar && dir !== 'C') return dir;
+  }
+  return null;
+}
+function honmeitekisatuOf(honmeiStar, chuguStar) {
+  const h = honmeisatuOf(honmeiStar, chuguStar);
+  return h ? OPP[h] : null;
+}
+
+function judgeDirection(dirId, ctx) {
+  const reasons = [];
+  let level = 'neutral';
+
+  if (dirId === ctx.goko)  { reasons.push('五黄殺'); level = 'bad-strong'; }
+  if (dirId === ctx.anken) { reasons.push('暗剣殺'); level = 'bad-strong'; }
+  if (dirId === ctx.saiha) { reasons.push('歳破'); if (level !== 'bad-strong') level = 'bad'; }
+  if (dirId === ctx.geppa) { reasons.push('月破'); if (level !== 'bad-strong') level = 'bad'; }
+  if (ctx.honmei && dirId === ctx.honmeisatu) {
+    reasons.push('本命殺');
+    if (level !== 'bad-strong') level = 'bad';
+  }
+  if (ctx.honmei && dirId === ctx.honmeitekisatu) {
+    reasons.push('本命的殺');
+    if (level !== 'bad-strong') level = 'bad';
+  }
+
+  if (level === 'neutral' && ctx.honmei) {
+    const starThere = ctx.daybanStars[dirId];
+    if (starThere && starThere !== 5) {
+      const myG = gogyo[ctx.honmei];
+      const dG  = gogyo[starThere];
+      const rel = gogyoRelation(myG, dG);
+      if (rel === 'hi') { reasons.push('比和(吉)'); level = 'good'; }
+      else if (rel === 'shoIn') { reasons.push('相生(吉)'); level = 'good'; }
+    }
+  }
+
+  if (reasons.length === 0) reasons.push('特記なし');
+  return { level, reasons };
+}
+
+function getKigakuDirectionByDeg(deg) {
+  const d = ((deg % 360) + 360) % 360;
+  for (const dir of directions) {
+    if (dir.start > dir.end) {
+      if (d >= dir.start || d < dir.end) return dir;
+    } else {
+      if (d >= dir.start && d < dir.end) return dir;
+    }
+  }
+  return directions[0];
+}
+function dirById(id) { return directions.find(d => d.id === id); }
+
+/* ============================================
+   描画
+============================================ */
+const fortuneColors = {
+  'good-strong': { fill: 'rgba(0,200,83,0.20)',  stroke: 'rgba(0,200,83,0.7)' },
+  'good':        { fill: 'rgba(76,175,80,0.16)', stroke: 'rgba(76,175,80,0.65)' },
+  'neutral':     { fill: 'rgba(107,104,128,0.06)', stroke: 'rgba(107,104,128,0.3)' },
+  'bad':         { fill: 'rgba(232,64,64,0.20)', stroke: 'rgba(232,64,64,0.7)' },
+  'bad-strong':  { fill: 'rgba(183,28,28,0.32)', stroke: 'rgba(183,28,28,0.95)' },
+};
+const fortuneIcon = {
+  'good-strong': '◎', 'good': '○', 'neutral': '・', 'bad': '✕', 'bad-strong': '☠',
+};
+function labelFor(level) {
+  return { 'good-strong':'大吉','good':'吉','neutral':'平','bad':'凶','bad-strong':'大凶' }[level] || '—';
+}
+
+let fortuneCtx = null;
+
+function buildDialBase() {
+  const sectorsG = document.getElementById('sectors');
+  const ticksG   = document.getElementById('ticks');
+  const zodiacG  = document.getElementById('zodiac');
+  sectorsG.innerHTML = '';
+  ticksG.innerHTML = '';
+  zodiacG.innerHTML = '';
+
+  const cx = 150, cy = 150, r = 150;
+  const polar = (deg, radius) => {
+    const rad = (deg * Math.PI) / 180;
+    return { x: cx + radius * Math.sin(rad), y: cy - radius * Math.cos(rad) };
+  };
+
+  directions.forEach(d => {
+    const p1 = polar(d.start, 42);
+    const p2 = polar(d.start, r - 4);
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', p1.x); line.setAttribute('y1', p1.y);
+    line.setAttribute('x2', p2.x); line.setAttribute('y2', p2.y);
+    line.setAttribute('stroke', '#c8a96e');
+    line.setAttribute('stroke-opacity', '0.5');
+    line.setAttribute('stroke-width', '1.2');
+    sectorsG.appendChild(line);
+  });
 
   for (let i = 0; i < 360; i++) {
-    const angle = (i * Math.PI) / 180;
-    const isMajor = i % 90 === 0;
-    const isMinor = i % 45 === 0 && !isMajor;
-    const isMed   = i % 10 === 0 && !isMajor && !isMinor;
-    const isSmall = i % 5 === 0 && !isMajor && !isMinor && !isMed;
-
+    const isZodiac = i % 30 === 15;
+    const isMed = i % 10 === 0 && !isZodiac;
+    const isSmall = i % 5 === 0 && !isZodiac && !isMed;
     let len, stroke, strokeW;
-    if (isMajor) { len = 22; stroke = '#c8a96e'; strokeW = 2.5; }
-    else if (isMinor) { len = 16; stroke = '#888'; strokeW = 1.5; }
-    else if (isMed)  { len = 10; stroke = '#555'; strokeW = 1; }
-    else if (isSmall){ len = 6;  stroke = '#3a3a4a'; strokeW = 0.8; }
+    if (isZodiac)     { len = 8; stroke = '#888'; strokeW = 1.2; }
+    else if (isMed)   { len = 5; stroke = '#555'; strokeW = 1; }
+    else if (isSmall) { len = 3; stroke = '#3a3a4a'; strokeW = 0.8; }
     else continue;
-
     const r1 = r - 4, r2 = r1 - len;
-    const x1 = cx + r1 * Math.sin(angle);
-    const y1 = cy - r1 * Math.cos(angle);
-    const x2 = cx + r2 * Math.sin(angle);
-    const y2 = cy - r2 * Math.cos(angle);
-
+    const p1 = polar(i, r1);
+    const p2 = polar(i, r2);
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('x1', x1); line.setAttribute('y1', y1);
-    line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+    line.setAttribute('x1', p1.x); line.setAttribute('y1', p1.y);
+    line.setAttribute('x2', p2.x); line.setAttribute('y2', p2.y);
     line.setAttribute('stroke', stroke);
     line.setAttribute('stroke-width', strokeW);
     ticksG.appendChild(line);
   }
 
-  // 方位文字（45度ごと）
-  cardinals.forEach((label, idx) => {
-    const deg = idx * 45;
-    const angle = (deg * Math.PI) / 180;
-    const lr = r - 36;
-    const x = cx + lr * Math.sin(angle);
-    const y = cy - lr * Math.cos(angle);
+  zodiacSigns.forEach(z => {
+    const p = polar(z.deg, r - 14);
     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    text.setAttribute('x', x);
-    text.setAttribute('y', y);
+    text.setAttribute('x', p.x);
+    text.setAttribute('y', p.y);
     text.setAttribute('text-anchor', 'middle');
     text.setAttribute('dominant-baseline', 'central');
-    text.setAttribute('fill', cardinalColors[label] || '#888');
-    text.setAttribute('font-size', ['N','E','S','W'].includes(label) ? '18' : '11');
-    text.setAttribute('font-weight', ['N','E','S','W'].includes(label) ? '700' : '400');
-    text.setAttribute('font-family', 'Rajdhani, sans-serif');
-    text.setAttribute('letter-spacing', '1');
-    text.textContent = label;
-    labelsG.appendChild(text);
+    text.setAttribute('fill', '#8a7a4e');
+    text.setAttribute('font-size', '10');
+    text.setAttribute('font-weight', '500');
+    text.setAttribute('font-family', 'Noto Serif JP, serif');
+    text.textContent = z.kanji;
+    zodiacG.appendChild(text);
   });
+}
 
-  // 10度ごとの数字
-  for (let i = 0; i < 360; i += 30) {
-    if (i % 90 === 0) continue;
-    const angle = (i * Math.PI) / 180;
-    const lr = r - 54;
-    const x = cx + lr * Math.sin(angle);
-    const y = cy - lr * Math.cos(angle);
-    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    text.setAttribute('x', x); text.setAttribute('y', y);
-    text.setAttribute('text-anchor', 'middle');
-    text.setAttribute('dominant-baseline', 'central');
-    text.setAttribute('fill', '#555');
-    text.setAttribute('font-size', '9');
-    text.setAttribute('font-family', 'Rajdhani, sans-serif');
-    text.textContent = i;
-    labelsG.appendChild(text);
+function renderFortune(ctx) {
+  const highlightG = document.getElementById('fortuneHighlights');
+  const labelsG    = document.getElementById('labels');
+  const badgeG     = document.getElementById('fortuneBadges');
+  highlightG.innerHTML = '';
+  labelsG.innerHTML = '';
+  badgeG.innerHTML = '';
+
+  const cx = 150, cy = 150, r = 150;
+  const polar = (deg, radius) => {
+    const rad = (deg * Math.PI) / 180;
+    return { x: cx + radius * Math.sin(rad), y: cy - radius * Math.cos(rad) };
+  };
+
+  directions.forEach(d => {
+    const j = judgeDirection(d.id, ctx);
+    const colors = fortuneColors[j.level];
+
+    const outerR = r - 4, innerR = 42;
+    const startDeg = d.start > d.end ? d.start - 360 : d.start;
+    const endDeg = d.end;
+    const p1 = polar(startDeg, innerR);
+    const p2 = polar(startDeg, outerR);
+    const p3 = polar(endDeg, outerR);
+    const p4 = polar(endDeg, innerR);
+    const largeArc = (endDeg - startDeg) > 180 ? 1 : 0;
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', [
+      `M ${p1.x} ${p1.y}`,
+      `L ${p2.x} ${p2.y}`,
+      `A ${outerR} ${outerR} 0 ${largeArc} 1 ${p3.x} ${p3.y}`,
+      `L ${p4.x} ${p4.y}`,
+      `A ${innerR} ${innerR} 0 ${largeArc} 0 ${p1.x} ${p1.y}`, 'Z'
+    ].join(' '));
+    path.setAttribute('fill', colors.fill);
+    path.setAttribute('stroke', colors.stroke);
+    path.setAttribute('stroke-width', '1.5');
+    highlightG.appendChild(path);
+
+    const starInDir = ctx.daybanStars[d.id];
+    const dirStarObj = directions.find(dd => dd.star === starInDir);
+    const starColor = dirStarObj ? dirStarObj.color : '#c8a96e';
+
+    const labelR = r - 38;
+    const p = polar(d.center, labelR);
+
+    const numText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    numText.setAttribute('x', p.x);
+    numText.setAttribute('y', p.y - 9);
+    numText.setAttribute('text-anchor', 'middle');
+    numText.setAttribute('dominant-baseline', 'central');
+    numText.setAttribute('fill', starColor);
+    numText.setAttribute('font-size', '22');
+    numText.setAttribute('font-weight', '700');
+    numText.setAttribute('font-family', 'Noto Serif JP, serif');
+    numText.setAttribute('filter', 'drop-shadow(0 0 4px ' + starColor + '99)');
+    numText.textContent = STAR_KANJI[starInDir];
+    labelsG.appendChild(numText);
+
+    const dirText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    dirText.setAttribute('x', p.x);
+    dirText.setAttribute('y', p.y + 9);
+    dirText.setAttribute('text-anchor', 'middle');
+    dirText.setAttribute('dominant-baseline', 'central');
+    dirText.setAttribute('fill', '#c8a96e');
+    dirText.setAttribute('font-size', '10');
+    dirText.setAttribute('font-family', 'Noto Serif JP, serif');
+    dirText.textContent = d.name;
+    labelsG.appendChild(dirText);
+
+    // 吉凶バッジ（内側、中心寄りに配置）
+    const bp = polar(d.center, 55);
+    const badge = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    badge.setAttribute('x', bp.x);
+    badge.setAttribute('y', bp.y);
+    badge.setAttribute('text-anchor', 'middle');
+    badge.setAttribute('dominant-baseline', 'central');
+    let bc = '#888';
+    if (j.level === 'good-strong') bc = '#00c853';
+    else if (j.level === 'good')   bc = '#4caf50';
+    else if (j.level === 'bad')    bc = '#e84040';
+    else if (j.level === 'bad-strong') bc = '#ff5252';
+    badge.setAttribute('fill', bc);
+    badge.setAttribute('font-size', '14');
+    badge.setAttribute('font-weight', '700');
+    badge.setAttribute('font-family', 'Noto Serif JP, serif');
+    badge.setAttribute('filter', 'drop-shadow(0 0 3px ' + bc + 'aa)');
+    badge.textContent = fortuneIcon[j.level];
+    badgeG.appendChild(badge);
+  });
+}
+
+function buildContext() {
+  const today = new Date();
+  const dayStar   = getDayStar(today);
+  const monthStar = getMonthStar(today);
+  const yearStar  = getYearStar(today);
+  const daybanStars = starsForChugu(dayStar);
+
+  const birthIso = localStorage.getItem('kigaku_birth');
+  let honmei = null;
+  if (birthIso) honmei = getYearStar(new Date(birthIso));
+
+  return {
+    today, dayStar, monthStar, yearStar, daybanStars, honmei,
+    goko:           gokoOf(dayStar),
+    anken:          ankenOf(dayStar),
+    saiha:          saihaOf(today),
+    geppa:          geppaOf(today),
+    honmeisatu:     honmei ? honmeisatuOf(honmei, dayStar) : null,
+    honmeitekisatu: honmei ? honmeitekisatuOf(honmei, dayStar) : null,
+  };
+}
+
+function refreshAll() {
+  fortuneCtx = buildContext();
+  renderFortune(fortuneCtx);
+
+  const ds = directions.find(d => d.star === fortuneCtx.dayStar);
+  document.getElementById('centerStarNum').textContent  = STAR_KANJI[fortuneCtx.dayStar];
+  document.getElementById('centerStarName').textContent = STAR_NAMES[fortuneCtx.dayStar];
+  if (ds) document.getElementById('centerStarNum').style.color = ds.color;
+
+  const t = fortuneCtx.today;
+  const dateStr = `${t.getFullYear()}/${String(t.getMonth()+1).padStart(2,'0')}/${String(t.getDate()).padStart(2,'0')}`;
+  document.getElementById('todayDate').textContent = dateStr;
+  document.getElementById('todayStars').textContent =
+    `日盤:${STAR_KANJI[fortuneCtx.dayStar]} / 月盤:${STAR_KANJI[fortuneCtx.monthStar]}`;
+
+  if (fortuneCtx.honmei) {
+    document.getElementById('honmeiText').textContent = STAR_NAMES[fortuneCtx.honmei];
+  } else {
+    document.getElementById('honmeiText').textContent = '設定する →';
   }
-})();
+  const saiDir = dirById(fortuneCtx.saiha);
+  document.getElementById('saihaText').textContent = saiDir ? saiDir.name : '—';
+}
 
-// コンパスロジック
+/* ============================================
+   コンパスロジック
+============================================ */
 const dial = document.getElementById('dial');
-const directionText = document.getElementById('direction-text');
-const degreesText = document.getElementById('degrees-text');
-const accuracyText = document.getElementById('accuracy-text');
 const statusDot = document.getElementById('statusDot');
 const statusText = document.getElementById('statusText');
 const permOverlay = document.getElementById('permissionOverlay');
 const permBtn = document.getElementById('permBtn');
+const fortuneVerdictEl = document.getElementById('fortuneVerdict');
+const fortuneVerdictTextEl = document.getElementById('fortuneVerdictText');
+const fortuneReasonEl = document.getElementById('fortuneReason');
 
 let currentHeading = 0;
 let targetHeading = 0;
-let animFrame;
-
-const cardinalNames = [
-  { name: '北', short: 'N', max: 22.5 },
-  { name: '北北東', short: 'NNE', max: 45 },
-  { name: '北東', short: 'NE', max: 67.5 },
-  { name: '東北東', short: 'ENE', max: 90 },
-  { name: '東', short: 'E', max: 112.5 },
-  { name: '東南東', short: 'ESE', max: 135 },
-  { name: '南東', short: 'SE', max: 157.5 },
-  { name: '南南東', short: 'SSE', max: 180 },
-  { name: '南', short: 'S', max: 202.5 },
-  { name: '南南西', short: 'SSW', max: 225 },
-  { name: '南西', short: 'SW', max: 247.5 },
-  { name: '西南西', short: 'WSW', max: 270 },
-  { name: '西', short: 'W', max: 292.5 },
-  { name: '西北西', short: 'WNW', max: 315 },
-  { name: '北西', short: 'NW', max: 337.5 },
-  { name: '北北西', short: 'NNW', max: 360 },
-];
-
-function getCardinal(deg) {
-  const d = ((deg % 360) + 360) % 360;
-  return cardinalNames.find(c => d < c.max) || cardinalNames[0];
-}
 
 function setStatus(type, msg) {
   statusDot.className = 'status-dot ' + type;
   statusText.textContent = msg;
 }
-
 function updateDisplay(heading) {
   const h = ((heading % 360) + 360) % 360;
   targetHeading = h;
 }
 
 function animate() {
-  // 最短経路で補間
   let diff = targetHeading - currentHeading;
   if (diff > 180) diff -= 360;
   if (diff < -180) diff += 360;
   currentHeading += diff * 0.12;
   currentHeading = ((currentHeading % 360) + 360) % 360;
 
-  // ダイヤルは反対方向に回転（地図のように）
   dial.style.transform = `rotate(${-currentHeading}deg)`;
 
   const h = Math.round(currentHeading);
-  const c = getCardinal(h);
-  directionText.textContent = c.short;
-  degreesText.textContent = h + '°';
+  const dir = getKigakuDirectionByDeg(h);
 
-  animFrame = requestAnimationFrame(animate);
+  if (fortuneCtx) {
+    const star = fortuneCtx.daybanStars[dir.id];
+    const starColor = directions.find(d => d.star === star)?.color || '#c8a96e';
+
+    const j = judgeDirection(dir.id, fortuneCtx);
+    fortuneVerdictEl.className = 'verdict ' + j.level;
+    fortuneVerdictEl.querySelector('.icon').textContent = fortuneIcon[j.level];
+    fortuneVerdictTextEl.textContent = `${dir.name} … ${labelFor(j.level)}`;
+    fortuneReasonEl.innerHTML =
+      `<strong style="color:${starColor}">${STAR_NAMES[star]}</strong> が回座 / ${j.reasons.join(' ・ ')}`;
+  }
+
+  requestAnimationFrame(animate);
 }
-animate();
 
-// センサー開始
+/* ============================================
+   センサー
+============================================ */
 function startSensor() {
   if (typeof DeviceOrientationEvent !== 'undefined' &&
       typeof DeviceOrientationEvent.requestPermission === 'function') {
-    // iOS 13+
     DeviceOrientationEvent.requestPermission()
       .then(state => {
         if (state === 'granted') {
@@ -572,11 +1407,8 @@ function startSensor() {
           setStatus('error', 'センサーのアクセスが拒否されました');
         }
       })
-      .catch(err => {
-        setStatus('error', 'エラー: ' + err.message);
-      });
+      .catch(err => setStatus('error', 'エラー: ' + err.message));
   } else {
-    // Android / その他
     attachListener();
     permOverlay.classList.add('hidden');
   }
@@ -584,40 +1416,30 @@ function startSensor() {
 
 function attachListener() {
   let hasWebkit = false;
-
   window.addEventListener('deviceorientationabsolute', (e) => {
     if (e.alpha !== null) {
       let heading = 360 - e.alpha;
-      if (e.webkitCompassHeading !== undefined) {
-        heading = e.webkitCompassHeading;
-        hasWebkit = true;
-      }
+      if (e.webkitCompassHeading !== undefined) { heading = e.webkitCompassHeading; hasWebkit = true; }
       updateDisplay(heading);
       setStatus('active', '磁北方向を検出中');
-      accuracyText.textContent = e.absolute ? '高' : '中';
     }
   }, true);
 
   window.addEventListener('deviceorientation', (e) => {
     if (hasWebkit && e.webkitCompassHeading !== undefined) {
       updateDisplay(e.webkitCompassHeading);
-      accuracyText.textContent = '高';
       setStatus('active', '磁北方向を検出中');
       return;
     }
     if (e.alpha !== null && !hasWebkit) {
-      let heading = 360 - e.alpha;
-      updateDisplay(heading);
-      accuracyText.textContent = '中';
+      updateDisplay(360 - e.alpha);
       setStatus('active', 'センサー読み取り中');
     }
   });
 
   setTimeout(() => {
-    if (statusDot.className.includes('active') === false) {
+    if (!statusDot.className.includes('active')) {
       setStatus('error', 'センサーが検出できません');
-      accuracyText.textContent = 'N/A';
-      // デモモード
       startDemoMode();
     }
   }, 3000);
@@ -633,13 +1455,86 @@ function startDemoMode() {
 }
 
 permBtn.addEventListener('click', startSensor);
-
-// Android：自動でセンサー開始を試みる
 if (typeof DeviceOrientationEvent !== 'undefined' &&
     typeof DeviceOrientationEvent.requestPermission !== 'function') {
-  // iOS以外は自動で開始
   setTimeout(() => startSensor(), 300);
 }
+
+/* ============================================
+   モーダル
+============================================ */
+const modal = document.getElementById('birthModal');
+const birthInput = document.getElementById('birthInput');
+const birthResult = document.getElementById('birthResult');
+const settingsBtn = document.getElementById('settingsBtn');
+const honmeiInfo = document.getElementById('honmeiInfo');
+const birthSave = document.getElementById('birthSave');
+const birthCancel = document.getElementById('birthCancel');
+
+function openModal() {
+  const saved = localStorage.getItem('kigaku_birth');
+  if (saved) {
+    birthInput.value = saved;
+    updateBirthResult(saved);
+  } else {
+    birthInput.value = '';
+    birthResult.textContent = '生年月日を入力してください';
+  }
+  modal.classList.remove('hidden');
+}
+function closeModal() { modal.classList.add('hidden'); }
+
+function updateBirthResult(iso) {
+  if (!iso) {
+    birthResult.textContent = '生年月日を入力してください';
+    return;
+  }
+  const d = new Date(iso);
+  const star = getYearStar(d);
+  const color = directions.find(dd => dd.star === star)?.color || '#c8a96e';
+  const ky = getKigakuYear(d);
+  birthResult.innerHTML = `あなたの本命星：<br><strong style="color:${color}; font-size:18px;">${STAR_NAMES[star]}</strong><br><span style="font-size:11px;color:var(--muted);font-family:'Noto Sans JP'">気学年: ${ky}年</span>`;
+}
+
+birthInput.addEventListener('input', e => updateBirthResult(e.target.value));
+settingsBtn.addEventListener('click', openModal);
+honmeiInfo.addEventListener('click', openModal);
+birthSave.addEventListener('click', () => {
+  if (birthInput.value) localStorage.setItem('kigaku_birth', birthInput.value);
+  closeModal();
+  refreshAll();
+});
+birthCancel.addEventListener('click', () => {
+  localStorage.removeItem('kigaku_birth');
+  closeModal();
+  refreshAll();
+});
+
+/* ============================================
+   説明モーダル
+============================================ */
+const infoModal = document.getElementById('infoModal');
+const legendBox = document.getElementById('legendBox');
+const infoClose = document.getElementById('infoClose');
+
+legendBox.addEventListener('click', () => {
+  infoModal.classList.remove('hidden');
+  infoModal.querySelector('.info-modal').scrollTop = 0;
+});
+infoClose.addEventListener('click', () => {
+  infoModal.classList.add('hidden');
+});
+// オーバーレイ部分タップで閉じる
+infoModal.addEventListener('click', (e) => {
+  if (e.target === infoModal) infoModal.classList.add('hidden');
+});
+
+/* ============================================
+   初期化
+============================================ */
+buildDialBase();
+refreshAll();
+animate();
 </script>
 </body>
 </html>
