@@ -409,6 +409,58 @@
     color-scheme: dark;
     margin-bottom: 14px;
   }
+  .birth-inputs {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .birth-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .birth-field input[type="number"] {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid rgba(200,169,110,0.3);
+    color: var(--white);
+    padding: 12px 28px 12px 12px;
+    border-radius: 6px;
+    font-size: 17px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    text-align: center;
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+  .birth-field input[type="number"]::-webkit-outer-spin-button,
+  .birth-field input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .birth-field input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 2px rgba(200,169,110,0.2);
+  }
+  .birth-unit {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
+    color: var(--gold);
+    pointer-events: none;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .birth-hint {
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+  }
   .modal-result {
     background: rgba(200,169,110,0.08);
     border: 1px solid rgba(200,169,110,0.2);
@@ -673,7 +725,21 @@
       ※ 立春(2/4)を年の境とします
     </p>
     <label>生年月日</label>
-    <input type="date" id="birthInput" min="1900-01-01" max="2099-12-31">
+    <div class="birth-inputs">
+      <div class="birth-field">
+        <input type="number" id="birthYear" min="1900" max="2099" placeholder="1990" inputmode="numeric" maxlength="4">
+        <span class="birth-unit">年</span>
+      </div>
+      <div class="birth-field">
+        <input type="number" id="birthMonth" min="1" max="12" placeholder="1" inputmode="numeric" maxlength="2">
+        <span class="birth-unit">月</span>
+      </div>
+      <div class="birth-field">
+        <input type="number" id="birthDay" min="1" max="31" placeholder="1" inputmode="numeric" maxlength="2">
+        <span class="birth-unit">日</span>
+      </div>
+    </div>
+    <div class="birth-hint">直接数字を入力できます</div>
     <div class="modal-result" id="birthResult">生年月日を入力してください</div>
     <div class="modal-actions">
       <button class="btn secondary" id="birthCancel">クリア</button>
@@ -1464,20 +1530,47 @@ if (typeof DeviceOrientationEvent !== 'undefined' &&
    モーダル
 ============================================ */
 const modal = document.getElementById('birthModal');
-const birthInput = document.getElementById('birthInput');
+const birthYear = document.getElementById('birthYear');
+const birthMonth = document.getElementById('birthMonth');
+const birthDay = document.getElementById('birthDay');
 const birthResult = document.getElementById('birthResult');
 const settingsBtn = document.getElementById('settingsBtn');
 const honmeiInfo = document.getElementById('honmeiInfo');
 const birthSave = document.getElementById('birthSave');
 const birthCancel = document.getElementById('birthCancel');
 
+// ISO日付 (YYYY-MM-DD) を 3つの入力に分解 / 結合
+function isoToParts(iso) {
+  if (!iso) return { y: '', m: '', d: '' };
+  const [y, m, d] = iso.split('-');
+  return { y, m: String(parseInt(m)), d: String(parseInt(d)) };
+}
+function partsToIso() {
+  const y = parseInt(birthYear.value);
+  const m = parseInt(birthMonth.value);
+  const d = parseInt(birthDay.value);
+  if (!y || !m || !d) return null;
+  if (y < 1900 || y > 2099) return null;
+  if (m < 1 || m > 12) return null;
+  if (d < 1 || d > 31) return null;
+  // 妥当性チェック (例: 2/30 など)
+  const test = new Date(y, m - 1, d);
+  if (test.getFullYear() !== y || test.getMonth() !== m - 1 || test.getDate() !== d) return null;
+  return `${String(y).padStart(4,'0')}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+}
+
 function openModal() {
   const saved = localStorage.getItem('kigaku_birth');
   if (saved) {
-    birthInput.value = saved;
+    const p = isoToParts(saved);
+    birthYear.value = p.y;
+    birthMonth.value = p.m;
+    birthDay.value = p.d;
     updateBirthResult(saved);
   } else {
-    birthInput.value = '';
+    birthYear.value = '';
+    birthMonth.value = '';
+    birthDay.value = '';
     birthResult.textContent = '生年月日を入力してください';
   }
   modal.classList.remove('hidden');
@@ -1496,11 +1589,35 @@ function updateBirthResult(iso) {
   birthResult.innerHTML = `あなたの本命星：<br><strong style="color:${color}; font-size:18px;">${STAR_NAMES[star]}</strong><br><span style="font-size:11px;color:var(--muted);font-family:'Noto Sans JP'">気学年: ${ky}年</span>`;
 }
 
-birthInput.addEventListener('input', e => updateBirthResult(e.target.value));
+// 入力時のオートフォーカス遷移と判定更新
+function handleBirthInput() {
+  const iso = partsToIso();
+  if (iso) {
+    updateBirthResult(iso);
+  } else {
+    // 全て空でない場合は無効を伝える
+    if (birthYear.value && birthMonth.value && birthDay.value) {
+      birthResult.textContent = '日付が正しくありません';
+    } else {
+      birthResult.textContent = '生年月日を入力してください';
+    }
+  }
+}
+birthYear.addEventListener('input', () => {
+  handleBirthInput();
+  if (birthYear.value.length >= 4) birthMonth.focus();
+});
+birthMonth.addEventListener('input', () => {
+  handleBirthInput();
+  if (parseInt(birthMonth.value) >= 2 || birthMonth.value.length >= 2) birthDay.focus();
+});
+birthDay.addEventListener('input', handleBirthInput);
+
 settingsBtn.addEventListener('click', openModal);
 honmeiInfo.addEventListener('click', openModal);
 birthSave.addEventListener('click', () => {
-  if (birthInput.value) localStorage.setItem('kigaku_birth', birthInput.value);
+  const iso = partsToIso();
+  if (iso) localStorage.setItem('kigaku_birth', iso);
   closeModal();
   refreshAll();
 });
